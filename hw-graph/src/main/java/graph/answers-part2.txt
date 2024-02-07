@@ -1,0 +1,97 @@
+## CSE 331 hw-graph Part 2 Questions
+
+NOTE: This file is used as part of hw-graph-part2, and is not due as part of the hw-graph-part1
+submission. You may leave it blank for hw-graph-part1.
+
+## Section 1
+###########################################################################
+
+A few examples of possible Graph representations:
+
+    A: A collection of edges.
+    B: An adjacency list, in which each node is associated with a list of its outgoing edges.
+    C: An adjacency matrix, which explicitly represents, for every pair ⟨A,B⟩ of edges, whether there is a link from A to B, and how many.
+
+1. In two or three sentences, explain an advantage and a disadvantage of each of the
+representations listed above (for example, in terms of runtime complexity, space
+complexity, or ease of implementation).
+
+A: The advantage of this is that it is easy to implement this because all you need is a set of edges
+   to keep track of every edge - you can just put an edge into the set and call it good. However, it can
+   be difficult to find an edge with a particular parent because you would need to go through all of the
+   edges every time, so the runtime would be very high.
+
+B: The disadvantage is that it is a little harder to implement than A, in that in order to add a node or
+   edge you need to first check if the node, or parent node, already exists and then add. However, the runtime
+   is a lot less for finding a particular edge because you can sort by parent node to find an edge.
+
+C: The disadvantage is that it's the hardest to implement out of all three choices because I have never worked
+   with matrices in Java and from what I've read, it is quite complex to create and modify a matrix. However,
+   it has the quickest runtime because you can determine from the matrix which node has which edges, and retrieve
+   that edge relatively quickly.
+
+
+2. In two to three sentences, describe the representation you chose and explain why you
+chose it. If you chose to use a different representation than one of the three we described
+above, be sure to list its advantages and disadvantages, too.
+
+I chose to use representation B because it is easy to implement for me, and offers a relatively quick way
+to find a certain edge. Though it's a little harder to implement than A, it categorizes nodes and edges in
+an easily accessible way that doesn't take too much runtime.
+
+
+## Section 4
+###########################################################################
+
+    (Please keep your answers brief and to-the-point.)
+
+1. Describe any new tests you added and why you added them, or why you feel that your original
+tests alone are sufficient.
+
+    I added new JUnit tests that tested that methods threw NullPointerExceptions when they were supposed to.
+In Part 1 of this assignment, I did not think I would need to make my program throw any such Exceptions, but
+as I implemented, I felt that they were necessary. So, I added JUnit tests for them
+
+    I added script tests that test what happens if a Node has an Edge that points to itself, or if a Node has multiple
+Edges pointing to the same Node. I previously had these kinds of tests in mind when creating JUnit tests, but
+after discussing with TAs in office hours and reading my grader's feedback, I realized these would be better as
+script tests.
+
+2. Did you make any changes to your specifications as you were implementing your Graph? (yes/no)
+If yes, describe your changes and why you made them.
+
+
+Yes.
+
+In the Edge class:
+    I made Edge.java implement Comparable because in order to properly alphabetize the Nodes and Edges in
+GraphTestDriver's .getChildren method, I needed to have a compareTo method so that I could sort a List of
+Edges.
+
+    I also added a parameter to the Edge constructor that accepts a label. When i was doing part 1 of this
+assignment, I thought that I could create the label by combining the value of each node. However, I realized
+that this would create identical labels for two edges that have the same parent and child, and this
+would not allow clients to add multiple edges between two nodes without breaking the specification.
+By adding a parameter for the label, two Edges with the same parent and child can exist as long as
+they have different labels.
+
+    I changed the specification for reverseEdge() in my Edge class to include the fact that the reversed Edge
+could have the same label as the original Edge because I felt that it was vague not to include that.
+
+In the Graph class:
+    I specified my Graph constructors to specify the abstract state of the newly created Graph better.
+
+    I specified addNode and addNodes to include what happens if a given Node is already in the Graph. I
+deleted the part of the spec in .AddEdges that said 'All the Edges in edges must be present in the Graph.'
+because it didn't make sense.
+
+    I removed the methods removeEdge() and removeNode() because looking at future assignments, I realized that
+I would never use those methods so it would be useless to implement them. I also removed getPath() because
+the grader pointed out that it was the client's job to implement a pathfinding algorithm, not the implementer's,
+and I agreed with that. In addition, I removed equals(), hashCode(), and toString() because it's hard to judge
+the equality of two Graphs, and useless, and looking at future assignments I did not see a need to print out
+a Graph.
+
+    Now, addEdges() and addNodes() take in a Set instead of a List to ensure that duplicate Nodes and Edges are
+not fed into the method, even though the method accounts for duplicates. getChildren() returns an array of Node
+labels instead of a List because it was easier to write tests for the method that way in GraphTestDriver.java.

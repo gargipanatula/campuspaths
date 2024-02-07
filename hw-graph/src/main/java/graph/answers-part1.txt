@@ -1,0 +1,113 @@
+## CSE 331 hw-graph Part 1 Questions
+
+## Section 1
+###########################################################################
+
+1. Write an AF and RI for IntQueue1 and IntQueue2
+
+    ### IntQueue1
+
+    Abstraction Function: entries is a LinkedList of Integer objects. The element
+    at the highest index is the least recently added and will be the first to be
+    removed, whereas the element at the lowest index is the most recently added
+    and will be the last to be removed.
+
+    Representation Invariant: entries.size() >= 0 && entries[i] != null where i is the ith element in entries.
+
+
+    ### IntQueue2
+
+    Abstraction Function:
+
+        entries is an array of Integer objects. The Integers are ordered in first-added to last-added
+        order in entries[(front...front + size - 1) % entries.length]. The ith Integer in the array is
+        entries[(front + i - 1) % entries.length)] and entries[front] is the front value of the array
+        if size > 0.
+
+    Representation Invariant:
+
+        (entries != null) && (size <= entries.length) && (front >= 0) && (front < entries.length)
+
+
+2. Group the snapshots of IntQueue2's internal state into groups that have the same abstract state.
+
+a, d, and g all have the abstract state of [1, 2].
+b and h both have the abstract state of [2, 3, 4].
+c and f both have the abstract state of [1, 2, 3].
+
+3. For each signature below, state and justify in 1-2 sentences (per part) whether the method or constructor
+could possibly expose the representation, given the information available. Explain any assumptions you made.
+
+    a. public int solveEquations(int x, int y, int z)` - no
+
+        No. int is an immutable type, so the client cannot modify it and the representation cannot be exposed.
+
+    b. `public String[] decode(boolean slowly)` - depends
+
+        Yes, if the method returns a String[] that references a String[] in the object, it could expose the
+        representation invariant.
+
+    c. `private Date myBirthday()` - immutable cuz client never sees
+
+        Yes, if the method returns a Date that references a Date in the object instead of creating a new one.
+
+    d. `public String toString()` - no
+
+        No. String is an immutable type, so the client cannot modify it and the representation cannot be exposed.
+
+    e. `public Iterator<Integer> elements()`- remove method so yes, (client can modify an object that is returned from remove)
+
+        Yes. Iterator has a .remove method that returns whatever is being iterated over. If what is returned is
+        referencing a Integer in the object, the representation can be exposed.
+
+    f. `public Deck(List<Card> cards)` - can modify cards
+
+        Yes, if the method returns a Deck that references a Deck in the object instead of creating a new one.
+
+
+## Section 2
+###########################################################################
+
+Briefly explain why you included the operations you did and why you feel they are a sufficient
+interface to a graph. If your design includes multiple classes or interfaces, explain why you
+included each one; if not, explain whether you considered additional classes and why you decided
+not to include them.
+
+My design includes three classes - one for Nodes, one for Edges, and one for the overall Graph.
+I created three classes because since a Graph is a collection of Nodes and Edges, it made sense
+to have Nodes and Edges be represented as objects that would be connected in the Graph. In
+addition, Nodes and Edges needed to store different sets of data so making them into objects rather
+than just putting them into the Graph class would make it easier to keep track of and associate data.
+
+I wanted Nodes and Edges to be immutable because it reduces the risk of the Graph being broken. If the
+client can't touch the Nodes and Edges, then the risk of client error is reduced to changes to the Graph.
+My Graph is mutable because I felt it was necessary for clients to be able to add and remove Nodes and Edges
+as they see fit, just as people can add and remove places and streets to a map.
+
+I kept Nodes simple, just creating methods to let people see the value and test for equality, because I did
+not see a reason to add more complicated methods. For edges, I included methods for getting the parent and
+child Node because I knew it was important for creating paths. I also included a method to reverse an Edge,
+in case a client wanted to quickly add an Edge between two Nodes that were connected in one direction. On
+top of that I included methods to get the edgeLabel, to help make sure that labels were not being repeated
+against the specification, and to test equality, for convenience.
+
+My Graph has three constructors to account for when a client wants to create a Graph but may or may not know
+what they want in it already. I created methods that can add/remove one or multiple Nodes or Edges so that
+the client does not have to call an add method many times if they want to add many Nodes or Edges at a time.
+I created a method that can create a path from one Node to another because creating paths is important in
+something like a map, and to help the path creating method I created getChildren and containsNode.
+
+## Section 3
+###########################################################################
+
+What was your testing strategy for this assignment? How do your script tests and JUnit tests
+differ from each other (if they do), and why?
+
+First, I tested all of my methods with the most basic Graph in mind (two Nodes connected by
+one Edge). Then, I started creating more complicated Graphs, with Nodes connecting to themselves
+and Nodes that are islands, to see how my methods would work with them.
+
+My script tests test some of my more basic methods, like adding a single Node, whereas my JUnit
+tests can test some of my more complicated methods, like creating a path or reversing an Edge.
+This is because I found that the script tests did not have as much functionality, and since I
+couldn't add scripts, my only option to explore complicated methods was through JUnit.

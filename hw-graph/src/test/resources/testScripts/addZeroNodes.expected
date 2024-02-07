@@ -1,0 +1,5 @@
+# Create a graph
+created graph graph1
+
+# Print the nodes in graph1
+graph1 contains:
